@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 import { Steps } from "@/components/steps";
 import AdditionalSettings from "@/app/admin/competition/steps/additional-settings";
 import CardPreview from "@/app/admin/competition/steps/card-preview";
@@ -33,12 +37,8 @@ const stepComponents: Record<string, React.ComponentType> = {
   "event-summary": EventSummary,
 };
 
-type CompetitionCreateProps = {
-  searchParams?: { step?: string };
-};
-
-export default function CompetitionCreate({ searchParams }: CompetitionCreateProps) {
-  const currentStepKey = searchParams?.step ?? "event-details";
+export default function CompetitionCreate() {
+  const [currentStepKey, setCurrentStepKey] = useState("event-details");
   const activeStepIndex = Math.max(
     0,
     steps.findIndex((step) => step.key === currentStepKey)
@@ -63,7 +63,7 @@ export default function CompetitionCreate({ searchParams }: CompetitionCreatePro
             <Steps
               steps={steps.map((step) => ({
                 label: step.label,
-                href: `/admin/competition/create?step=${step.key}`,
+                onClick: () => setCurrentStepKey(step.key),
               }))}
               activeStep={activeStepIndex}
               orientation="vertical"

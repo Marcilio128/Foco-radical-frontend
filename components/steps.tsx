@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 
@@ -7,6 +9,7 @@ type Step = {
   label: string
   description?: string
   href?: string
+  onClick?: () => void
 }
 
 type StepsProps = {
@@ -54,7 +57,19 @@ function Steps({
 
           return (
             <li key={step.label}>
-              {step.href ? <Link href={step.href}>{content}</Link> : content}
+              {step.href ? (
+                <Link href={step.href}>{content}</Link>
+              ) : step.onClick ? (
+                <button
+                  type="button"
+                  className="block w-full text-left"
+                  onClick={step.onClick}
+                >
+                  {content}
+                </button>
+              ) : (
+                content
+              )}
             </li>
           )
         })}
@@ -67,40 +82,55 @@ function Steps({
       {steps.map((step, index) => {
         const isComplete = index < activeStep
         const isCurrent = index === activeStep
+        const stepContent = (
+          <div className="flex items-center gap-3">
+            <span
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-full border text-sm font-semibold",
+                isComplete
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : isCurrent
+                  ? "border-primary text-primary"
+                  : "border-muted-foreground/40 text-muted-foreground"
+              )}
+            >
+              {index + 1}
+            </span>
+            <div className="flex flex-col">
+              <span
+                className={cn(
+                  "text-sm font-medium",
+                  isComplete || isCurrent
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                )}
+              >
+                {step.label}
+              </span>
+              {step.description ? (
+                <span className="text-xs text-muted-foreground">
+                  {step.description}
+                </span>
+              ) : null}
+            </div>
+          </div>
+        )
 
         return (
           <li key={step.label} className="flex flex-1 items-center">
-            <div className="flex items-center gap-3">
-              <span
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border text-sm font-semibold",
-                  isComplete
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : isCurrent
-                    ? "border-primary text-primary"
-                    : "border-muted-foreground/40 text-muted-foreground"
-                )}
+            {step.href ? (
+              <Link href={step.href}>{stepContent}</Link>
+            ) : step.onClick ? (
+              <button
+                type="button"
+                className="text-left"
+                onClick={step.onClick}
               >
-                {index + 1}
-              </span>
-              <div className="flex flex-col">
-                <span
-                  className={cn(
-                    "text-sm font-medium",
-                    isComplete || isCurrent
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {step.label}
-                </span>
-                {step.description ? (
-                  <span className="text-xs text-muted-foreground">
-                    {step.description}
-                  </span>
-                ) : null}
-              </div>
-            </div>
+                {stepContent}
+              </button>
+            ) : (
+              stepContent
+            )}
             {index < steps.length - 1 ? (
               <div
                 className={cn(
