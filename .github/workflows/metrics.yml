@@ -14,12 +14,12 @@ jobs:
 
       - name: Calculate Metrics
         run: |
-          # Coleta os dados do último mês
-          FEAT=$(git log --since="1 month ago" --grep="feature:" --count)
-          BUG=$(git log --since="1 month ago" --grep="bug:" --count)
-          EPIC=$(git log --since="1 month ago" --grep="epic:" --count)
-          DOCS=$(git log --since="1 month ago" --grep="docs:" --count)
-          CHORE=$(git log --since="1 month ago" --grep="chore:" --count)
+          # Usa rev-list --count para retornar somente o numero
+          FEAT=$(git rev-list --count --since="1 month ago" --grep="^feature:" HEAD)
+          BUG=$(git rev-list --count --since="1 month ago" --grep="^bug:" HEAD)
+          EPIC=$(git rev-list --count --since="1 month ago" --grep="^epic:" HEAD)
+          DOCS=$(git rev-list --count --since="1 month ago" --grep="^docs:" HEAD)
+          CHORE=$(git rev-list --count --since="1 month ago" --grep="^chore:" HEAD)
 
           echo "### 📊 Resumo de Entregas (Últimos 30 dias)" >> $GITHUB_STEP_SUMMARY
           echo ":sparkles: - **$FEAT** Novas features criadas" >> $GITHUB_STEP_SUMMARY
