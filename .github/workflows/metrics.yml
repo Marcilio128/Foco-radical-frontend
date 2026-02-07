@@ -1,0 +1,37 @@
+name: Project Health Metrics
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Calculate Metrics
+        run: |
+          TOTAL=$(git rev-list --count --since="1 month ago" HEAD)
+          FEAT=$(git log --since="1 month ago" --grep="feature:" --count)
+          BUG=$(git log --since="1 month ago" --grep="bug:" --count)
+          EPIC=$(git log --since="1 month ago" --grep="epic:" --count)
+          DOCS=$(git log --since="1 month ago" --grep="docs:" --count)
+          CHORE=$(git log --since="1 month ago" --grep="chore:" --count)
+          
+          # Evita erro de divisão por zero
+          if [ $TOTAL -eq 0 ]; then TOTAL=1; fi
+          
+          OTHER=$((TOTAL - FEAT - BUG - EPIC - DOCS - CHORE))
+          
+          echo "### 📊 Relatório Mensal de Esforço" >> $GITHUB_STEP_SUMMARY
+          echo "* **Features:** $((FEAT * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Bugs:** $((BUG * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Epics:** $((EPIC * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Docs:** $((DOCS * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Chores:** $((CHORE * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
+          
+          CHART_URL="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Features','Bugs','Epics','Docs','Chores','Outros'],datasets:[{data:[$FEAT,$BUG,$EPIC,$DOCS,$CHORE,$OTHER]}]}}"
+          echo "![Gráfico]($CHART_URL)" >> $GITHUB_STEP_SUMMARY
