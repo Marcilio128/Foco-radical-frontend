@@ -1,6 +1,6 @@
 {
   "/app": {
-    "template": "chore: :wrench:(Create a commit default for this project): creating a commit pattern",
+    "template": "docs: :memo:(try to make a control commits): ",
     "options": {
       "args": [],
       "disableAppendPaths": true,
