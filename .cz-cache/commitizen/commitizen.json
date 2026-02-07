@@ -1,0 +1,13 @@
+{
+  "/app": {
+    "template": "feature: :sparkles:(New screen on cometition): imperative",
+    "options": {
+      "args": [],
+      "disableAppendPaths": true,
+      "emitData": true,
+      "quiet": false,
+      "retryLastCommit": false,
+      "hookMode": false
+    }
+  }
+}
