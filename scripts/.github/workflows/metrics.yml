@@ -1,0 +1,52 @@
+name: Project Health Metrics
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: # Permite rodar manualmente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Pega todo o histórico para o gráfico ser real
+
+      - name: Calculate Metrics
+        run: |
+          TOTAL=$(git rev-list --count --since="1 month ago" HEAD)
+          FEAT=$(git log --since="1 month ago" --grep="feature:" --count)
+          BUG=$(git log --since="1 month ago" --grep="bug:" --count)
+          EPIC=$(git log --since="1 month ago" --grep="epic:" --count)
+          DOCS=$(git log --since="1 month ago" --grep="docs:" --count)
+          CHORE=$(git log --since="1 month ago" --grep="chore:" --count)
+          OTHER=$((TOTAL - FEAT - BUG - EPIC - DOCS - CHORE))
+          
+          # Calcula porcentagem (Bash simples)
+          if [ $TOTAL -gt 0 ]; then
+            BUG_PERC=$((BUG * 100 / TOTAL))
+            FEAT_PERC=$((FEAT * 100 / TOTAL))
+            EPIC_PERC=$((EPIC * 100 / TOTAL))
+            DOCS_PERC=$((DOCS * 100 / TOTAL))
+            CHORE_PERC=$((CHORE * 100 / TOTAL))
+            OTHER_PERC=$((OTHER * 100 / TOTAL))
+          else
+            BUG_PERC=0
+            FEAT_PERC=0
+            EPIC_PERC=0
+            DOCS_PERC=0
+            CHORE_PERC=0
+            OTHER_PERC=0
+          fi
+
+          echo "### 📊 Relatório Mensal de Esforço" >> $GITHUB_STEP_SUMMARY
+          echo "* **Features:** $FEAT_PERC%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Bugs:** $BUG_PERC% (Sua métrica de 30%!)" >> $GITHUB_STEP_SUMMARY
+          echo "* **Epics:** $EPIC_PERC%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Docs:** $DOCS_PERC%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Chores:** $CHORE_PERC%" >> $GITHUB_STEP_SUMMARY
+          echo "* **Outros:** $OTHER_PERC%" >> $GITHUB_STEP_SUMMARY
+          
+          # Gera a imagem do gráfico
+          CHART_URL="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Features','Bugs','Epics','Docs','Chores','Outros'],datasets:[{data:[$FEAT,$BUG,$EPIC,$DOCS,$CHORE,$OTHER]}]}}"
+          echo "![Gráfico]($CHART_URL)" >> $GITHUB_STEP_SUMMARY

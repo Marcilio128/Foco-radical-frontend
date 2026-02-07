@@ -1,6 +1,6 @@
 {
   "/app": {
-    "template": "feature: :sparkles:(New screen on cometition): imperative",
+    "template": "chore: :wrench:(Create a commit default for this project): creating a commit pattern",
     "options": {
       "args": [],
       "disableAppendPaths": true,
