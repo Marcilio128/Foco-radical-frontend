@@ -1,6 +1,6 @@
 {
   "/app": {
-    "template": "docs: :memo:(try to make a control commits): ",
+    "template": "bug: :bug:(Ajust on metrics file): ",
     "options": {
       "args": [],
       "disableAppendPaths": true,
