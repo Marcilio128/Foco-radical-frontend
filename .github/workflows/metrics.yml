@@ -14,24 +14,19 @@ jobs:
 
       - name: Calculate Metrics
         run: |
-          TOTAL=$(git rev-list --count --since="1 month ago" HEAD)
+          # Coleta os dados do último mês
           FEAT=$(git log --since="1 month ago" --grep="feature:" --count)
           BUG=$(git log --since="1 month ago" --grep="bug:" --count)
           EPIC=$(git log --since="1 month ago" --grep="epic:" --count)
           DOCS=$(git log --since="1 month ago" --grep="docs:" --count)
           CHORE=$(git log --since="1 month ago" --grep="chore:" --count)
+
+          echo "### 📊 Resumo de Entregas (Últimos 30 dias)" >> $GITHUB_STEP_SUMMARY
+          echo ":sparkles: - **$FEAT** Novas features criadas" >> $GITHUB_STEP_SUMMARY
+          echo ":bug: - **$BUG** Bugs resolvidos" >> $GITHUB_STEP_SUMMARY
+          echo ":rocket: - **$EPIC** Épicos trabalhados" >> $GITHUB_STEP_SUMMARY
+          echo ":books: - **$DOCS** Documentações atualizadas" >> $GITHUB_STEP_SUMMARY
+          echo ":wrench: - **$CHORE** Tarefas de manutenção (Chores)" >> $GITHUB_STEP_SUMMARY
           
-          # Evita erro de divisão por zero
-          if [ $TOTAL -eq 0 ]; then TOTAL=1; fi
-          
-          OTHER=$((TOTAL - FEAT - BUG - EPIC - DOCS - CHORE))
-          
-          echo "### 📊 Relatório Mensal de Esforço" >> $GITHUB_STEP_SUMMARY
-          echo "* **Features:** $((FEAT * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
-          echo "* **Bugs:** $((BUG * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
-          echo "* **Epics:** $((EPIC * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
-          echo "* **Docs:** $((DOCS * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
-          echo "* **Chores:** $((CHORE * 100 / TOTAL))%" >> $GITHUB_STEP_SUMMARY
-          
-          CHART_URL="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Features','Bugs','Epics','Docs','Chores','Outros'],datasets:[{data:[$FEAT,$BUG,$EPIC,$DOCS,$CHORE,$OTHER]}]}}"
-          echo "![Gráfico]($CHART_URL)" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "_Relatório gerado automaticamente baseado no padrão de commits do time._" >> $GITHUB_STEP_SUMMARY
