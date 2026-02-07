@@ -6,11 +6,11 @@ module.exports = {
     { value: "docs: :memo:", name: "docs:    Documentacao (:memo:)" },
     { value: "chore: :wrench:", name: "chore:   Manutencao (:wrench:)" }
   ],
-  questions: ["type", "subject"],
-  message: {
-    type: "Essa alteracao se encaixa em qual qualificacao?",
-    subject: "Descreva a alteracao de forma breve:"
+  messages: {
+    type: "Select the commit type:",
+    subject: "Briefly describe the change (English only):"
   },
-  subjectLimit: 72,
+  skipQuestions: ["scope", "body", "breaking", "footer", "confirmCommit"],
+  subjectLimit: 50,
   commitMessageFormat: "{{type}} {{subject}}"
 };
