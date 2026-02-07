@@ -10,7 +10,7 @@ module.exports = {
     type: "Select the commit type:",
     subject: "Briefly describe the change (English only):"
   },
-  skipQuestions: ["scope", "body", "breaking", "footer", "confirmCommit"],
+  skipQuestions: ["scope", "body", "breaking", "footer"],
   subjectLimit: 50,
   commitMessageFormat: "{{type}} {{subject}}"
 };
